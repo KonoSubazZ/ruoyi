@@ -3,6 +3,10 @@ import { createApp } from 'vue'
 import Cookies from 'js-cookie'
 
 import ElementPlus from 'element-plus'
+/**
+ * 导入过程 先从main.js所在目录查找element-plus/dist/index.css
+ * 未找到会去node_modules 找到 'element-plus' 包
+ */
 import 'element-plus/dist/index.css'
 import locale from 'element-plus/es/locale/lang/zh-cn'
 
