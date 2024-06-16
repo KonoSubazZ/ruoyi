@@ -19,6 +19,22 @@ export function useDict(...args) {
         })
       }
     })
+
+    /*
+     * 这里为什么用toRefs呢？
+     * const {a, b} = ref({a: 1, b: 2})
+     * 此时这样是无效的：ref的返回值是一个普通的ref对象，而不是响应式对象， 不能直接使用解构
+     *正确的用法是：
+     * const res = ref({a: 1, b: 2})
+     * const {a, b} = res.value
+     * 使用toRefs可以将ref对象转换为响应式对象
+     * 使用toRefs后，res.value是普通对象，可以直接使用a, b
+     * const {a, b} = toRefs(res.value)
+     * 使用toRefs后，a, b 是ref类型，而不是普通对象
+     * 使用toRefs后，可以直接使用a.value, b.value获取值
+     * 使用toRefs后，不能直接使用a, b赋值，需要使用a.value = 1, b.value = 2
+
+    */
     return toRefs(res.value);
   })()
 }
