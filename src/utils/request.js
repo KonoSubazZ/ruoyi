@@ -12,7 +12,10 @@ let downloadLoadingInstance;
 export let isRelogin = { show: false };
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
-/** @type {*} */
+
+
+// 这里在封装拦截异常时候都使用了promise来返回 我的理解虽然已经在拦截中统一处理了
+// 也就是弹窗或则其他提示，但是在具体页面中也可以继续链式操作处理具体业务 比如结束loading等
 const service = axios.create({
   // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL
   // baseURL: 'https://some-domain.com/api/',
@@ -39,6 +42,9 @@ service.interceptors.request.use(config => {
     config.headers['Authorization'] = 'Bearer ' + getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   }
   // get请求映射params参数
+  // 手动去除url中值为 undefined '' null的参数  axios默认应该也会去除undefined的参数 '' null 不清楚 代实验
+  // 时间参数特殊处理 ?params = {beginTime: 1626384000000, endTime: 1626384000000}
+  // 进行特殊编码{}  正常axios有默认处理
   if (config.method === 'get' && config.params) {
     let url = config.url + '?' + tansParams(config.params);
     url = url.slice(0, -1);
@@ -84,6 +90,12 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(res => {
   // 未设置状态码则默认成功状态
   const code = res.data.code || 200;
+
+  // 这里也是正常道理 不做其他处理默认是成功状态 fuilfilled 状态
+  // return res.data
+  // 这里我测试了直接返回red.data 也是一个promise对象 我暂时理解为显示的返回 可读性增强
+  // return res.data
+
   // 获取错误信息
   const msg = errorCode[code] || res.data.msg || errorCode['default']
   // 二进制数据则直接返回
@@ -116,6 +128,8 @@ service.interceptors.response.use(res => {
     return Promise.resolve(res.data)
   }
 },
+  // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围 默认值为 [200, 300} 超时会抛出异常
+  // 我暂时理解为 axios 内部的异常处理 也会抛出错误
   error => {
     console.log('err' + error)
     let { message } = error;
@@ -127,6 +141,10 @@ service.interceptors.response.use(res => {
       message = "系统接口" + message.substr(message.length - 3) + "异常";
     }
     ElMessage({ message: message, type: 'error', duration: 5 * 1000 })
+
+    // 这里我尝试直接返回error对象，虽然也是一个promise对象， 但是状态没有正常结束 显示返回时成功状态是fulfilled
+    // 使用Promise.reject(error) 更改promise状态为rejected 便于业务处理
+    // 返回正常rejected 不会进行.then 操作 导致以前没注意的空指针错误，但是.catch 会进行
     return Promise.reject(error)
   }
 )

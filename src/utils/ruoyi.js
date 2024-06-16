@@ -88,7 +88,7 @@ export function selectDictLabel(datas, value) {
 
 // 回显数据字典（字符串数组）
 export function selectDictLabels(datas, value, separator) {
-  if (value === undefined || value.length ===0) {
+  if (value === undefined || value.length === 0) {
     return "";
   }
   if (Array.isArray(value)) {
@@ -202,13 +202,27 @@ export function handleTree(data, id, parentId, children) {
 }
 
 /**
-* 参数处理
+* 参数处理 去除空参数 '' null undefined 
 * @param {*} params  参数
 */
 export function tansParams(params) {
   let result = ''
   for (const propName of Object.keys(params)) {
     const value = params[propName];
+    // 这里使用encodeURIComponent是将空格等一些特殊字符编码 url正常不能传递空格
+    /** 
+     * const params = {
+       name: 'John Doe',
+       age: 30,
+       address: {
+          street: '123 Main St',
+          city: 'Anytown',
+          state: 'CA'
+       }
+      };
+      const queryParams = tansParams(params);
+      Output: name=John%20Doe&age=30&address[street]=123%20Main%20St&address[city]=Anytown&address[state]=CA
+     */
     var part = encodeURIComponent(propName) + "=";
     if (value !== null && value !== "" && typeof (value) !== "undefined") {
       if (typeof value === 'object') {
