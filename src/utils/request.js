@@ -16,6 +16,7 @@ axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
 // 这里在封装拦截异常时候都使用了promise来返回 我的理解虽然已经在拦截中统一处理了
 // 也就是弹窗或则其他提示，但是在具体页面中也可以继续链式操作处理具体业务 比如结束loading等
+// 新理解 -- 这里如果不做异常处理 默认返回的promise是fuilfilled 成功状态
 const service = axios.create({
   // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL
   // baseURL: 'https://some-domain.com/api/',
