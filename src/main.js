@@ -70,9 +70,19 @@ app.component('ImagePreview', ImagePreview)
 app.component('RightToolbar', RightToolbar)
 app.component('Editor', Editor)
 
+// 插件 (Plugins) 是一种能为 Vue 添加全局功能的工具代码。
+// app.use 引入插件 自动执行install方法
 app.use(router)
+console.log("🚀 ~ router:", router)
+
 app.use(store)
+console.log('store', store)
+
+// 一个插件可以是一个拥有 install() 方法的对象，也可以直接是一个安装函数本身
+// 我现在大致理解这种安装插件的方式也可以 收到的参数的是app
 app.use(plugins)
+console.log("🚀 ~ plugins:", plugins)
+
 app.use(elementIcons)
 app.component('svg-icon', SvgIcon)
 
