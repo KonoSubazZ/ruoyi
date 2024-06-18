@@ -75,6 +75,12 @@ const register = ref(false);
 const redirect = ref(undefined);
 
 watch(route, (newRoute) => {
+
+  /* 
+    短路逻辑
+    它会首先检查newRoute.query是否为真值（即非null、undefined、false、0、NaN、空字符串），如果是，则继续评估并返回newRoute.query.redirect的值；
+    如果不是，则直接返回newRoute.query的值（在这种情况下实际上是false，因为它是第一个“假”值）。
+  */
   redirect.value = newRoute.query && newRoute.query.redirect;
 }, { immediate: true });
 
@@ -115,10 +121,10 @@ function handleLogin() {
 }
 
 function getCode() {
-  console.log(getCodeImg(), 'res');
   getCodeImg().then(res => {
     captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled;
     if (captchaEnabled.value) {
+      // 验证码请求格式 base64
       codeUrl.value = "data:image/gif;base64," + res.img;
       loginForm.value.uuid = res.uuid;
     }
@@ -130,6 +136,11 @@ function getCookie() {
   const password = Cookies.get("password");
   const rememberMe = Cookies.get("rememberMe");
   loginForm.value = {
+
+    /**
+     * 这里需要注意的是 null === undefined 为 false
+     * localStroage.getItem(key) 获取一个不存在的值为 null
+     */
     username: username === undefined ? loginForm.value.username : username,
     password: password === undefined ? loginForm.value.password : decrypt(password),
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
