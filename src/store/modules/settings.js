@@ -5,9 +5,7 @@ const { sideTheme, showSettings, topNav, tagsView, fixedHeader, sidebarLogo, dyn
 
 const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
 
-const useSettingsStore = defineStore(
-  'settings',
-  {
+const useSettingsStore = defineStore('settings', {
     state: () => ({
       title: '',
       theme: storageSetting.theme || '#409EFF',
