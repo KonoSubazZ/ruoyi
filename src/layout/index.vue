@@ -1,4 +1,8 @@
 <template>
+  <!-- 动态绑定class写法 -->
+  <!-- :style="{ '--current-color': theme } 定义了一个自定义属性， 通常自定义属性以 --my-color
+  作用域：本身以及自元素， 通常：root 来定义自定义元素，这样html的元素都可以使用自定义的变量
+  使用： var(--my-color) -->
   <div :class="classObj" class="app-wrapper" :style="{ '--current-color': theme }">
     <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleOutsideClick" />
     <sidebar v-if="!sidebar.hide" class="sidebar-container" />
@@ -36,10 +40,10 @@ const classObj = computed(() => ({
   withoutAnimation: sidebar.value.withoutAnimation,
   mobile: device.value === 'mobile'
 }))
-
 const { width, height } = useWindowSize();
 const WIDTH = 992; // refer to Bootstrap's responsive design
 
+// watchEffect所指定的回调中用到的数据只要发生变化，则直接重新执行回调。
 watchEffect(() => {
   if (device.value === 'mobile' && sidebar.value.opened) {
     useAppStore().closeSideBar({ withoutAnimation: false })
