@@ -20,6 +20,7 @@ const useUserStore = defineStore(
         const password = userInfo.password
         const code = userInfo.code
         const uuid = userInfo.uuid
+        // 这里我理解的是使用的是promise 进行封装,是为了后面的业务也能使用链式操作
         return new Promise((resolve, reject) => {
           login(username, password, code, uuid).then(res => {
             setToken(res.token)
@@ -36,7 +37,8 @@ const useUserStore = defineStore(
           getInfo().then(res => {
             const user = res.user
             const avatar = (user.avatar == "" || user.avatar == null) ? defAva : import.meta.env.VITE_APP_BASE_API + user.avatar;
-
+            // [] && 1 返回值是1
+            // [] 也会执行res.roles.length > 0
             if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
               this.roles = res.roles
               this.permissions = res.permissions
